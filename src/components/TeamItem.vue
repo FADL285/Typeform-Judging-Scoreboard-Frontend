@@ -51,6 +51,13 @@ const overallRating = computed(() => getTeamOverallRating(props.team.id));
         }}</span>
       </p>
 
+      <p class="mt-4 flex items-center justify-center text-xl">
+        Total Rate:
+        <span class="mx-4 text-3xl text-blue-700">
+          {{ overallRating }}
+        </span>
+      </p>
+
       <p class="mt-4 text-center text-gray-500">
         💡 <span class="text-lg">{{ responsesLength }}</span>
         {{ responsesLength > 1 ? "responses" : "response" }}
