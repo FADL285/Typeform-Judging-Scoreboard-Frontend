@@ -1,0 +1,19 @@
+<script setup>
+import { RouterView } from "vue-router";
+import TheHeader from "./components/TheHeader.vue";
+</script>
+
+<template>
+  <header>
+    <div class="wrapper">
+      <img
+        src="@/assets/logo.webp"
+        alt="IEEE ManSB"
+        class="mx-auto my-4 max-w-lg px-4"
+      />
+      <TheHeader />
+    </div>
+  </header>
+
+  <RouterView />
+</template>

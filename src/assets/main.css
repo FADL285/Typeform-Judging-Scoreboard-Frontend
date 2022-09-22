@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .heading--primary {
+    @apply relative text-5xl capitalize;
+  }
+
+  .heading--primary::before {
+    content: "";
+    @apply w-1/5;
+    height: 2px;
+    background: #3e4b35;
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .team-place {
+    @apply absolute -top-10 -left-10 inline-flex h-16 w-16 items-center justify-center rounded-full p-10 text-6xl font-medium uppercase tracking-widest text-white;
+    background: linear-gradient(rgb(3 80 161 / 70%), rgb(0 0 0 / 68%));
+  }
+}
