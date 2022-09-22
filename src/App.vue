@@ -9,7 +9,7 @@ import TheHeader from "./components/TheHeader.vue";
       <img
         src="@/assets/logo.webp"
         alt="IEEE ManSB"
-        class="mx-auto my-4 max-w-lg px-4"
+        class="mx-auto my-4 w-full max-w-lg px-4"
       />
       <TheHeader />
     </div>
