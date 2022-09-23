@@ -23,7 +23,7 @@ export const useCompetitionStore = defineStore("competition", {
         throw new Error(error.value);
       }
 
-      this.competitions = JSON.parse(data.value).data;
+      this.competitions = JSON.parse(data.value).data.reverse();
     },
     async fetchCompetition(id) {
       const { statusCode, data } = await useFetch(`${BASE_API_URL}/${id}`);
