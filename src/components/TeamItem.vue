@@ -32,7 +32,9 @@ const overallRating = computed(() => getTeamOverallRating(props.team.id));
         :key="question"
         class="flex items-center justify-between"
       >
-        <span>{{ ratingQuestions[question].title }}:</span>
+        <span class="truncate pr-2">
+          {{ ratingQuestions[question].title }}
+        </span>
         <span class="rate">
           {{ getOverallQuestionRating(team.id, question) }}
         </span>
