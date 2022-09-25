@@ -38,7 +38,7 @@ const teams = ref([]);
     <h3 class="heading--primary">{{ competition.title }}</h3>
     <section
       v-if="teams.length"
-      class="mt-[5rem] grid items-center gap-x-16 gap-y-[4rem] px-12 md:grid-cols-2 xl:grid-cols-3"
+      class="mt-[5rem] grid grid-cols-1 items-center gap-x-16 gap-y-[4rem] px-12 md:grid-cols-2 xl:grid-cols-3"
     >
       <TeamItem
         v-for="(team, idx) in teams"

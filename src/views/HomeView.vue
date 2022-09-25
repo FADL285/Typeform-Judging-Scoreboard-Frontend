@@ -14,7 +14,7 @@ fetchCompetitions();
   <main class="mb-8 mt-[5rem] text-center">
     <h3 class="heading--primary">Competitions Fields</h3>
     <section
-      class="mt-14 grid items-center justify-center gap-4 px-4 md:grid-cols-2"
+      class="mt-14 grid grid-cols-1 items-center justify-center gap-4 px-4 md:grid-cols-2"
       v-if="competitions.length"
     >
       <CompetitionItem

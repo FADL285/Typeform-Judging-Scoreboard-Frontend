@@ -3,9 +3,8 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useCompetitionStore } from "@/stores/competition.js";
 
-const { ratingQuestionsIds, ratingQuestions } = storeToRefs(
-  useCompetitionStore()
-);
+const { ratingQuestionsIds, ratingQuestionById, overallQuestionsRating } =
+  storeToRefs(useCompetitionStore());
 const { getOverallQuestionRating, getTeamOverallRating } =
   useCompetitionStore();
 
@@ -33,7 +32,7 @@ const overallRating = computed(() => getTeamOverallRating(props.team.id));
         class="flex items-center justify-between"
       >
         <span class="truncate pr-2 text-lg">
-          {{ ratingQuestions[question].title }}
+          {{ ratingQuestionById(question).title }}
         </span>
         <span class="rate">
           {{ getOverallQuestionRating(team.id, question) }}
@@ -44,21 +43,19 @@ const overallRating = computed(() => getTeamOverallRating(props.team.id));
     <hr class="mx-auto my-8 w-1/2" />
 
     <footer>
-      <p class="flex items-center justify-center text-2xl">
-        Average Rate:
-        <span class="mx-4 text-4xl text-blue-700">{{
-          overallRating / Math.max(responsesLength, 1) > 0
-            ? (overallRating / Math.max(responsesLength, 1)).toFixed(2)
-            : 0
-        }}</span>
-      </p>
-
-      <p class="mt-4 flex items-center justify-center text-xl">
-        Total Rate:
-        <span class="mx-4 text-3xl text-blue-700">
-          {{ overallRating }}
-        </span>
-      </p>
+      <div class="flex flex-col items-center justify-center text-2xl">
+        <p>Total Rate:</p>
+        <p class="mx-4 text-4xl text-blue-700">
+          {{
+            overallRating / Math.max(responsesLength, 1) > 0
+              ? (overallRating / Math.max(responsesLength, 1)).toFixed(2)
+              : 0
+          }}
+          <span class="text-xl text-blue-900"
+            >/ {{ overallQuestionsRating }}</span
+          >
+        </p>
+      </div>
 
       <p class="mt-4 text-center text-gray-500">
         💡 <span class="text-lg">{{ responsesLength }}</span>

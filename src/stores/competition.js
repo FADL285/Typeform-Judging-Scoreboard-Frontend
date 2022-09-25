@@ -12,9 +12,12 @@ export const useCompetitionStore = defineStore("competition", {
     teams: (state) => state.competition.teams,
     teamById: (state) => (id) =>
       state.competition.teams.find((team) => team.id === id),
-    ratingQuestions: (state) => state.competition.ratingQuestions,
     ratingQuestionsIds: (state) =>
-      Object.keys(state.competition.ratingQuestions),
+      state.competition.ratingQuestions.map((q) => q.id),
+    ratingQuestionById: (state) => (id) =>
+      state.competition.ratingQuestions.find((q) => q.id === id),
+    overallQuestionsRating: (state) =>
+      state.competition.ratingQuestions.reduce((acc, q) => acc + q.max, 0),
   },
   actions: {
     async fetchCompetitions() {
@@ -23,7 +26,9 @@ export const useCompetitionStore = defineStore("competition", {
         throw new Error(error.value);
       }
 
-      this.competitions = JSON.parse(data.value).data.reverse();
+      this.competitions = JSON.parse(data.value).data.sort((c1, c2) =>
+        c1.title.localeCompare(c2.title)
+      );
     },
     async fetchCompetition(id) {
       const { statusCode, data } = await useFetch(`${BASE_API_URL}/${id}`);
