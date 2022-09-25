@@ -27,7 +27,7 @@ export const useCompetitionStore = defineStore("competition", {
       }
 
       this.competitions = JSON.parse(data.value).data.sort((c1, c2) =>
-        c1.title.localeCompare(c2.title)
+        c2.title.localeCompare(c1.title)
       );
     },
     async fetchCompetition(id) {

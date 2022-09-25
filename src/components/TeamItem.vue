@@ -19,7 +19,7 @@ const overallRating = computed(() => getTeamOverallRating(props.team.id));
     class="group relative flex flex-col justify-between rounded-sm bg-white py-8 px-6 shadow-xl transition-shadow hover:shadow-lg"
   >
     <header>
-      <h5 class="text-5xl font-bold text-gray-800">{{ team.title }}</h5>
+      <h5 class="text-dynamic font-bold text-gray-800">{{ team.title }}</h5>
       <div class="mt-4 border-t-2 border-indigo-100 pt-2">
         <span class="team-place"> {{ order }} </span>
       </div>

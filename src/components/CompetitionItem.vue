@@ -11,7 +11,7 @@ defineProps(["competition"]);
   >
     <article>
       <div>
-        <h5 class="text-5xl font-bold text-gray-800">
+        <h5 class="text-dynamic font-bold text-gray-800">
           {{ competition.title }}
         </h5>
         <div class="mt-4 border-t-2 border-indigo-100 pt-2">

@@ -19,7 +19,13 @@
   }
 
   .team-place {
-    @apply absolute -top-10 -left-10 inline-flex h-16 w-16 items-center justify-center rounded-full p-10 text-6xl font-medium uppercase tracking-widest text-white;
+    @apply absolute -top-10 -left-6 inline-flex h-16 w-16 items-center justify-center rounded-full p-10 text-6xl font-medium uppercase tracking-widest text-white sm:-left-10;
     background: linear-gradient(rgb(3 80 161 / 70%), rgb(0 0 0 / 68%));
+  }
+}
+
+@layer utilities {
+  .text-dynamic {
+    font-size: clamp(2rem, 3.5vw, 3rem);
   }
 }
