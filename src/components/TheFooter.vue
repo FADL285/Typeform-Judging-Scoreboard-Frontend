@@ -4,7 +4,7 @@
     <p>
       Created by
       <a
-        class="font-semibold text-blue-800 hover:text-blue-600"
+        class="font-semibold text-rose-700 hover:text-rose-600"
         href="https://www.linkedin.com/in/fadl285"
         target="_blank"
       >

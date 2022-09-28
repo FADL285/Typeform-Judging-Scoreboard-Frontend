@@ -34,7 +34,22 @@ const teams = ref([]);
 </script>
 
 <template>
-  <main class="mb-8 mt-[5rem] text-center">
+  <main v-if="competition" class="mb-8 mt-[5rem] text-center">
+    <!-- content: "";
+    width: 20px;
+    height: 20px;
+    background: red;
+    display: inline-block;
+    border-radius: 50%; -->
+    <h5
+      class="mb-4 flex items-baseline justify-center gap-4 text-center text-4xl"
+    >
+      <span
+        class="inline-block h-7 w-7 rounded-full border"
+        :style="{ backgroundColor: competition.variables.color }"
+      ></span>
+      <span>{{ competition.variables.panel }}</span>
+    </h5>
     <h3 class="heading--primary">{{ competition.title }}</h3>
     <section
       v-if="teams.length"
@@ -47,6 +62,6 @@ const teams = ref([]);
         :order="idx + 1"
       />
     </section>
-    <TheLoader v-else />
   </main>
+  <TheLoader v-else />
 </template>

@@ -8,7 +8,7 @@ const routes = [
     component: HomeView,
   },
   {
-    path: "/competition/:id",
+    path: "/panels/:id",
     name: "competition",
     props: true,
     // route level code-splitting

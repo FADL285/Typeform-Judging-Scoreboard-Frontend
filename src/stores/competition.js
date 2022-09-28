@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import { useFetch } from "@vueuse/core";
 
-const BASE_API_URL = "https://ieee-victoris.herokuapp.com/api/";
+const BASE_API_URL = "http://127.0.0.1:3000/api/";
 
 export const useCompetitionStore = defineStore("competition", {
   state: () => ({
     competitions: [],
-    competition: {},
+    competition: null,
   }),
   getters: {
     teams: (state) => state.competition.teams,
@@ -18,25 +18,32 @@ export const useCompetitionStore = defineStore("competition", {
       state.competition.ratingQuestions.find((q) => q.id === id),
     overallQuestionsRating: (state) =>
       state.competition.ratingQuestions.reduce((acc, q) => acc + q.max, 0),
+    competitionDetails: (state) => (id) =>
+      state.competitions.find((c) => c.id === id),
   },
   actions: {
     async fetchCompetitions() {
+      // Check if competitions exists
+      if (this.competitions.length) return;
+
       const { error, data } = await useFetch(BASE_API_URL);
       if (error.value) {
         throw new Error(error.value);
       }
 
       this.competitions = JSON.parse(data.value).data.sort((c1, c2) =>
-        c2.title.localeCompare(c1.title)
+        c1.variables.panel.localeCompare(c2.variables.panel)
       );
     },
     async fetchCompetition(id) {
+      this.competition = null;
+
       const { statusCode, data } = await useFetch(`${BASE_API_URL}/${id}`);
       if (statusCode.value === 404) {
         throw new Error("Competition not found");
       }
 
-      this.competition = JSON.parse(data.value)?.data || {};
+      this.competition = JSON.parse(data.value)?.data || null;
     },
     getOverallQuestionRating(teamId, questionId) {
       const team = this.teamById(teamId);

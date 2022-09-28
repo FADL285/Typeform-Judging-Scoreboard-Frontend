@@ -1,4 +1,4 @@
-# IEEE-Victoris
+# NASA Space Apps Cairo - Challenge Board
 
 This template should help get you started developing with Vue 3 in Vite.
 
