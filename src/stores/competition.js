@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useFetch } from "@vueuse/core";
 
-const BASE_API_URL = "http://127.0.0.1:3000/api/";
+const BASE_API_URL = "https://nasa-space-apps-cairo.herokuapp.com/api/";
 
 export const useCompetitionStore = defineStore("competition", {
   state: () => ({
