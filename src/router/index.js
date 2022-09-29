@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "@/views/HomeView.vue";
+import { useAuthStore } from "@/stores/auth.js";
 
 const routes = [
   {
     path: "/",
     name: "home",
     component: HomeView,
+    meta: { requiresAuth: true },
   },
   {
     path: "/panels/:id",
@@ -15,6 +17,12 @@ const routes = [
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import("../views/CompetitionView.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/authentication",
+    name: "authentication",
+    component: () => import("../views/AuthView.vue"),
   },
   {
     path: "/:pathMatch(.*)*",
@@ -35,6 +43,18 @@ const router = createRouter({
       return { top: 0 };
     }
   },
+});
+
+router.beforeEach((to) => {
+  const { authenticated } = useAuthStore();
+  if (to.meta.requiresAuth) {
+    if (!authenticated) {
+      return { name: "authentication" };
+    }
+  }
+  if (to.name === "authentication" && authenticated) {
+    return { name: "home" };
+  }
 });
 
 export default router;

@@ -1,10 +1,37 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth.js";
+import { useRouter } from "vue-router";
+
+const { login } = useAuthStore();
+const router = useRouter();
+
+const form = ref(null);
+const formError = ref("");
+const username = ref("");
+const password = ref("");
+
+const authenticate = () => {
+  try {
+    login(username.value, password.value);
+    formError.value = "";
+    form.value.reset();
+    router.push({ name: "home" });
+  } catch (error) {
+    formError.value = error.message;
+  }
+};
+</script>
 
 <template>
   <!-- Login Form With Tailwind CSS -->
   <div class="flex items-center justify-center">
     <div class="w-full max-w-md">
-      <form class="mb-4 rounded bg-white px-8 pt-6 pb-8 shadow-md">
+      <form
+        @submit.prevent="authenticate"
+        class="mb-4 rounded bg-white px-8 pt-6 pb-8 shadow-md"
+        ref="form"
+      >
         <h3 class="mb-6 text-center text-xl">Login to access the board!</h3>
         <div class="mb-4">
           <label
@@ -18,6 +45,8 @@
             id="username"
             type="text"
             placeholder="Username"
+            required
+            v-model="username"
           />
         </div>
         <div class="mb-6">
@@ -32,8 +61,13 @@
             id="password"
             type="password"
             placeholder="******************"
+            required
+            minlength="6"
+            v-model="password"
           />
-          <!-- <p class="text-xs italic text-red-500">Please choose a password.</p> -->
+          <p class="text-base italic text-red-500" v-if="formError">
+            {{ formError }}
+          </p>
         </div>
         <div class="flex items-center justify-between">
           <button
