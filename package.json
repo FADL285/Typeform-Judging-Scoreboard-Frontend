@@ -1,12 +1,29 @@
 {
-  "name": "nasa-space-apps-board",
+  "name": "typeform-judging-score-board",
   "version": "0.0.0",
+  "description": "Fetch responses from Typeform and display it in a score board - it fetch workspace forms and set each form as card which has Teams and display the total rating score.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 4173",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FADL285/Typeform-Judging-Score-Board-Frontend.git"
+  },
+  "keywords": [
+    "typeform",
+    "judging",
+    "score",
+    "board"
+  ],
+  "author": "Mohamed Fadl <Mohamed.Fadl2852@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FADL285/Typeform-Judging-Score-Board-Frontend/issues"
+  },
+  "homepage": "https://github.com/FADL285/Typeform-Judging-Score-Board-Frontend#readme",
   "dependencies": {
     "@vueuse/core": "^9.2.0",
     "pinia": "^2.0.21",
