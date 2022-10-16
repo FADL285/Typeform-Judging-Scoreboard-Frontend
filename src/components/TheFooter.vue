@@ -1,6 +1,14 @@
+<script setup>
+import { computed } from "vue";
+
+const currentYear = computed(() => new Date().getFullYear());
+</script>
+
 <template>
   <footer class="mt-auto py-4 text-center text-gray-700">
-    <p class="copyright">Copyrights &copy; 2022 All Rights Reserved.</p>
+    <p class="copyright">
+      Copyrights &copy; {{ currentYear }} All Rights Reserved.
+    </p>
     <p>
       Created by
       <a
