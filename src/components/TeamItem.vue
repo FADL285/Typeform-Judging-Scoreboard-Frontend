@@ -45,13 +45,13 @@ const overallRating = computed(() => getTeamOverallRating(props.team.id));
     <footer>
       <div class="flex flex-col items-center justify-center text-2xl">
         <p>Total Rate:</p>
-        <p class="mx-4 text-4xl text-rose-700">
+        <p class="mx-4 text-4xl text-zinc-800">
           {{
             overallRating / Math.max(responsesLength, 1) > 0
               ? (overallRating / Math.max(responsesLength, 1)).toFixed(2)
               : 0
           }}
-          <span class="text-xl text-rose-900"
+          <span class="text-xl text-zinc-700"
             >/ {{ overallQuestionsRating }}</span
           >
         </p>
@@ -64,3 +64,10 @@ const overallRating = computed(() => getTeamOverallRating(props.team.id));
     </footer>
   </article>
 </template>
+
+<style lang="pcss">
+  .team-place {
+  @apply absolute -top-10 -left-6 inline-flex h-16 w-16 items-center justify-center rounded-full p-10 text-6xl font-medium uppercase tracking-widest text-white sm:-left-10;
+  background: linear-gradient(rgb(253 196 55 / 70%), rgb(0 0 0 / 65%));
+}
+</style>

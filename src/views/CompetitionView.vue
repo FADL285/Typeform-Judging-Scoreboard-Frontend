@@ -35,14 +35,9 @@ const teams = ref([]);
 
 <template>
   <main v-if="competition" class="mb-8 mt-[5rem] text-center">
-    <!-- content: "";
-    width: 20px;
-    height: 20px;
-    background: red;
-    display: inline-block;
-    border-radius: 50%; -->
     <h5
       class="mb-4 flex items-baseline justify-center gap-4 text-center text-4xl"
+      v-if="competition?.variables?.color"
     >
       <span
         class="inline-block h-7 w-7 rounded-full border"

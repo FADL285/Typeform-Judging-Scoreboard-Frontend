@@ -4,14 +4,22 @@ import { RouterLink } from "vue-router";
 
 const props = defineProps(["competition"]);
 
-const lightColorsList = ["white", "yellow"];
+const lightColorsList = [
+  "white",
+  "floralwhite",
+  "azure",
+  "aliceblue",
+  "darkgrey",
+  "greenyellow",
+  "yellow",
+];
 
 const ribbonBorderStyle = computed(() => ({
-  borderColor: props.competition.variables.color,
+  borderColor: props.competition?.variables?.color,
 }));
 const ribbonStyle = computed(() => ({
-  backgroundColor: props.competition.variables.color,
-  color: lightColorsList.includes(props.competition.variables.color)
+  backgroundColor: props.competition?.variables?.color,
+  color: lightColorsList.includes(props.competition?.variables?.color)
     ? "black"
     : "white",
 }));
@@ -24,9 +32,13 @@ const ribbonStyle = computed(() => ({
   >
     <article>
       <div>
-        <div class="ribbon text-base" :style="ribbonBorderStyle">
+        <div
+          class="ribbon text-base"
+          :style="ribbonBorderStyle"
+          v-if="props.competition?.variables?.color"
+        >
           <span :style="ribbonStyle">
-            {{ competition.variables.panel }}
+            {{ competition?.variables?.panel || "Panel" }}
           </span>
         </div>
         <h4 class="text-dynamic px-10 font-bold text-gray-800">
@@ -41,7 +53,7 @@ const ribbonStyle = computed(() => ({
         </div>
       </div>
 
-      <div class="mt-8 inline-flex items-center justify-center text-rose-600">
+      <div class="mt-8 inline-flex items-center justify-center text-zinc-700">
         <p class="text-lg font-medium">More Details</p>
 
         <svg
@@ -62,3 +74,64 @@ const ribbonStyle = computed(() => ({
     </article>
   </RouterLink>
 </template>
+
+<style lang="pcss">
+  a.card:nth-child(3n + 3) {
+  @apply md:col-span-3;
+}
+
+
+/* common */
+.ribbon {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  position: absolute;
+}
+.ribbon::before,
+.ribbon::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  display: block;
+  border: 5px solid;
+  border-color: inherit;
+}
+.ribbon span {
+  @apply bg-zinc-800 text-white;
+  position: absolute;
+  display: block;
+  width: 185px;
+  height: 38px;
+  padding: 7px 0;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* top left*/
+.ribbon {
+  top: -10px;
+  left: -10px;
+}
+.ribbon::before,
+.ribbon::after {
+  border-top-color: transparent;
+  border-left-color: transparent;
+}
+.ribbon::before {
+  top: 0;
+  right: 35px;
+}
+.ribbon::after {
+  bottom: 35px;
+  left: 0;
+}
+.ribbon span {
+  right: 12px;
+  top: 24px;
+  transform: rotate(-45deg);
+}
+</style>

@@ -1,7 +1,9 @@
 import { defineStore } from "pinia";
 import { useFetch } from "@vueuse/core";
 
-const BASE_API_URL = "https://nasa-space-apps-cairo.herokuapp.com/api/";
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
+const BASE_API_URL = `${baseUrl}/api/`;
 
 export const useCompetitionStore = defineStore("competition", {
   state: () => ({
@@ -31,9 +33,11 @@ export const useCompetitionStore = defineStore("competition", {
         throw new Error(error.value);
       }
 
-      this.competitions = JSON.parse(data.value).data.sort((c1, c2) =>
-        c1.variables.panel.localeCompare(c2.variables.panel)
-      );
+      this.competitions = JSON.parse(data.value).data.sort((c1, c2) => {
+        if (c1.variables?.panel)
+          return c1.variables.panel.localeCompare(c2.variables.panel);
+        else return c1.title.localeCompare(c2.title);
+      });
     },
     async fetchCompetition(id) {
       this.competition = null;

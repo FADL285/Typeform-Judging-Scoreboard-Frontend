@@ -71,7 +71,7 @@ const authenticate = () => {
         </div>
         <div class="flex items-center justify-between">
           <button
-            class="focus:shadow-outline w-full rounded bg-rose-500 py-2 px-4 font-bold text-white hover:bg-rose-700 focus:outline-none"
+            class="focus:shadow-outline w-full rounded bg-zinc-800 py-2 px-4 font-bold text-white hover:bg-zinc-700 focus:outline-none"
             type="submit"
           >
             Sign In
