@@ -1,7 +1,7 @@
 {
-  "name": "typeform-judging-score-board",
+  "name": "typeform-judging-scoreboard",
   "version": "0.0.0",
-  "description": "Fetch responses from Typeform and display it in a score board - it fetch workspace forms and set each form as card which has Teams and display the total rating score.",
+  "description": "Fetch responses from Typeform and display it in a scoreboard - it fetch workspace forms and set each form as card which has Teams and display the total rating score.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FADL285/Typeform-Judging-Score-Board-Frontend.git"
+    "url": "git+https://github.com/FADL285/Typeform-Judging-Scoreboard-Frontend.git"
   },
   "keywords": [
     "typeform",
@@ -21,9 +21,9 @@
   "author": "Mohamed Fadl <Mohamed.Fadl2852@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/FADL285/Typeform-Judging-Score-Board-Frontend/issues"
+    "url": "https://github.com/FADL285/Typeform-Judging-Scoreboard-Frontend/issues"
   },
-  "homepage": "https://github.com/FADL285/Typeform-Judging-Score-Board-Frontend#readme",
+  "homepage": "https://github.com/FADL285/Typeform-Judging-Scoreboard-Frontend#readme",
   "dependencies": {
     "@vueuse/core": "^9.2.0",
     "pinia": "^2.0.21",
