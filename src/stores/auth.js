@@ -1,5 +1,7 @@
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
+
+import { isValidSession } from "../session.mjs";
 
 const STORAGE_KEY = "scoreboard-session";
 export const useAuthStore = defineStore("auth", () => {
@@ -7,9 +9,13 @@ export const useAuthStore = defineStore("auth", () => {
   const expires = ref(0);
   try {
     const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null");
-    if (saved?.expires > Date.now()) { token.value = saved.token; expires.value = saved.expires; }
+    if (isValidSession(saved)) { token.value = saved.token; expires.value = saved.expires; }
   } catch { sessionStorage.removeItem(STORAGE_KEY); }
-  const authenticated = computed(() => Boolean(token.value) && expires.value > Date.now());
+  function isSessionValid() {
+    const valid = isValidSession({ token: token.value, expires: expires.value });
+    if (!valid) logout();
+    return valid;
+  }
   function logout() {
     token.value = ""; expires.value = 0; sessionStorage.removeItem(STORAGE_KEY);
   }
@@ -24,5 +30,5 @@ export const useAuthStore = defineStore("auth", () => {
     token.value = result.token; expires.value = result.expires;
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
   }
-  return { authenticated, token, login, logout };
+  return { isSessionValid, token, expires, login, logout };
 });

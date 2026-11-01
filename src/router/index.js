@@ -46,7 +46,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  const { authenticated } = useAuthStore();
+  const authenticated = useAuthStore().isSessionValid();
   if (to.meta.requiresAuth) {
     if (!authenticated) {
       return { name: "authentication" };

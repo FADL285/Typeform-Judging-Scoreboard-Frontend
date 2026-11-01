@@ -6,6 +6,8 @@ import TeamItem from "@/components/TeamItem.vue";
 import { useCompetitionStore } from "@/stores/competition.js";
 import TheLoader from "../components/TheLoader.vue";
 
+import { destinationForError } from "../api-client.mjs";
+
 const router = useRouter();
 const route = useRoute();
 const props = defineProps(["id"]);
@@ -15,22 +17,24 @@ const { fetchCompetition, orderedTeams } = useCompetitionStore();
 
 const teams = ref([]);
 
-(async () => {
+const loadError = ref("");
+const loading = ref(false);
+async function load() {
+  loadError.value = ""; loading.value = true;
   try {
     await fetchCompetition(props.id);
     teams.value = orderedTeams(competition.value.teams);
   } catch (error) {
-    console.error(error);
-    router.push({
-      name: "NotFound",
-      // preserve current path and remove the first char to avoid the target URL starting with `//`
-      params: { pathMatch: route.path.substring(1).split("/") },
-      // preserve existing query and hash if any
-      query: route.query,
-      hash: route.hash,
+    const destination = destinationForError(error);
+    if (destination === "authentication") router.replace({ name: "authentication" });
+    else if (destination === "NotFound") router.replace({
+      name: "NotFound", params: { pathMatch: route.path.substring(1).split("/") },
+      query: route.query, hash: route.hash,
     });
-  }
-})();
+    else loadError.value = error.message || "Unable to load scores. Please try again.";
+  } finally { loading.value = false; }
+}
+load();
 </script>
 
 <template>
@@ -58,5 +62,8 @@ const teams = ref([]);
       />
     </section>
   </main>
-  <TheLoader v-else />
+  <div v-else-if="loadError" role="alert" class="mt-8 text-center">
+    <p>{{ loadError }}</p><button @click="load" class="mt-4 underline">Try again</button>
+  </div>
+  <TheLoader v-else-if="loading" />
 </template>
