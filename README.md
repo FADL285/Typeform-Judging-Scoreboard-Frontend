@@ -38,9 +38,6 @@
 ```bash
 VITE_APP_NAME="Your App Name"
 VITE_BASE_URL="Your Backend Endpoint URL" # Required
-VITE_AUTH_USER="Scoreboard Access Username" # Required
-VITE_AUTH_PASS="Scoreboard Access Password" # Required
-VITE_AUTH_IDENTIFIER="%M0_FAD1@Typeform_Scoreboard@FADL285%#X&^"  # Add a strong password here or keep it as it is 💁
 ```
 
 ## Project Setup

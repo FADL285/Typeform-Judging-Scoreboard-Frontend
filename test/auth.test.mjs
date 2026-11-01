@@ -27,3 +27,16 @@ test('API rejection clears a session; upstream/network failures are retryable, n
   await assert.rejects(upstream('panel'), error => destinationForError(error) === null);
   assert.equal(destinationForError({ status: 404 }), 'NotFound');
 });
+
+test('a delayed old-token 401 cannot erase a newer login or route it to sign-in', async () => {
+  let session = { token: 'old', expires: 9000 };
+  let resolveRequest; let cleared = false;
+  const get = createApiClient({ baseUrl: 'https://backend.example', getSession: () => session, clearSession: () => { cleared = true; }, now: () => 1000,
+    fetchImpl: () => new Promise(resolve => { resolveRequest = resolve; }),
+  });
+  const pending = get('panel');
+  session = { token: 'new', expires: 9999 };
+  resolveRequest({ status: 401 });
+  await assert.rejects(pending, error => destinationForError(error) === null);
+  assert.equal(cleared, false); assert.equal(session.token, 'new');
+});

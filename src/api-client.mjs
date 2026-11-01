@@ -10,8 +10,11 @@ export function createApiClient({ baseUrl, getSession, clearSession, fetchImpl =
       headers: { Authorization: `Bearer ${session.token}` },
     });
     if (response.status === 401) {
-      clearSession();
-      throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
+      if (getSession()?.token === session.token) {
+        clearSession();
+        throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
+      }
+      throw new Error('This request used an older session. Please try again.');
     }
     const data = await response.json();
     if (!response.ok) throw Object.assign(new Error(data.message || 'Unable to load scoreboard'), { status: response.status });
