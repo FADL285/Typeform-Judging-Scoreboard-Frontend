@@ -1,25 +1,28 @@
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { defineStore } from "pinia";
-import { useLocalStorage } from "@vueuse/core";
 
-// GET AUTH INFO AND PASSWORD From .env
-const authUser = import.meta.env.VITE_AUTH_USER;
-const authPassword = import.meta.env.VITE_AUTH_PASS;
-const authIdentifier = import.meta.env.VITE_AUTH_IDENTIFIER;
-
+const STORAGE_KEY = "scoreboard-session";
 export const useAuthStore = defineStore("auth", () => {
-  const identifier = useLocalStorage("identifier");
-  const authenticated = computed(() => identifier.value === authIdentifier);
-  function login(username, password) {
-    if (username === authUser && password === authPassword) {
-      identifier.value = authIdentifier;
-    } else {
-      throw new Error("Username or password incorrect");
-    }
+  const token = ref("");
+  const expires = ref(0);
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null");
+    if (saved?.expires > Date.now()) { token.value = saved.token; expires.value = saved.expires; }
+  } catch { sessionStorage.removeItem(STORAGE_KEY); }
+  const authenticated = computed(() => Boolean(token.value) && expires.value > Date.now());
+  function logout() {
+    token.value = ""; expires.value = 0; sessionStorage.removeItem(STORAGE_KEY);
   }
-
-  return {
-    authenticated,
-    login,
-  };
+  async function login(username, password) {
+    const base = import.meta.env.VITE_BASE_URL.replace(/\/$/, "");
+    const response = await fetch(`${base}/api/auth`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || "Unable to sign in");
+    token.value = result.token; expires.value = result.expires;
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+  }
+  return { authenticated, token, login, logout };
 });

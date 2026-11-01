@@ -11,9 +11,9 @@ const formError = ref("");
 const username = ref("");
 const password = ref("");
 
-const authenticate = () => {
+const authenticate = async () => {
   try {
-    login(username.value, password.value);
+    await login(username.value, password.value);
     formError.value = "";
     form.value.reset();
     router.push({ name: "home" });

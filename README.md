@@ -83,3 +83,11 @@ You can deploy the application on any hosting services platform
 ## License
 
 [ISC](https://choosealicense.com/licenses/isc/)
+
+## Authentication and score ordering
+
+Deploy with the paired backend server-authentication update. Only `VITE_APP_NAME` and `VITE_BASE_URL` belong in frontend configuration. Remove `VITE_AUTH_*`; passwords and signing secrets belong exclusively on the backend. Login exchanges credentials for an eight-hour server-signed bearer token held in session storage and attached to scoreboard requests. Use HTTPS.
+
+Teams are ranked by the same unrounded average total score per submitted judging response that the card displays (rounded only for presentation). Missing criterion answers contribute zero; responses remain in the denominator. Equal averages keep the input order. This preserves the displayed scoring formula while correcting the inconsistent sum-based ranking.
+
+Run scoring regression checks with `npm test`.
