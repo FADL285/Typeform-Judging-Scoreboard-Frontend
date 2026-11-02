@@ -13,7 +13,7 @@ const password = ref("");
 
 const authenticate = async () => {
   try {
-    await login(username.value, password.value);
+    if (!(await login(username.value, password.value))) return;
     formError.value = "";
     form.value.reset();
     router.push({ name: "home" });

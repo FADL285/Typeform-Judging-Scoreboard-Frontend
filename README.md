@@ -85,6 +85,8 @@ You can deploy the application on any hosting services platform
 
 Deploy with the paired backend server-authentication update. Only `VITE_APP_NAME` and `VITE_BASE_URL` belong in frontend configuration. Remove `VITE_AUTH_*`; passwords and signing secrets belong exclusively on the backend. Login exchanges credentials for an eight-hour server-signed bearer token held in session storage and attached to scoreboard requests. Use HTTPS.
 
-Teams are ranked by the same unrounded average total score per submitted judging response that the card displays (rounded only for presentation). Missing criterion answers contribute zero; responses remain in the denominator. Equal averages keep the input order. This preserves the displayed scoring formula while correcting the inconsistent sum-based ranking.
+Teams retain the original event implementation: rank by descending SUM of all criterion ratings across submitted judging responses. Cards separately display the average per judging response (sum divided by response count), as the original UI did. Equal sums retain input order. No average-based ranking policy is introduced. Missing or invalid criterion ratings stop provisional ranking with an explicit incomplete-data error; they are not silently awarded zero.
 
 Run scoring regression checks with `npm test`.
+
+Backend URLs must use HTTPS; HTTP is accepted only for explicit Vite local development to localhost/127.0.0.1/::1. Login and scoreboard requests have a 15-second deadline. Denied session storage remains safely signed out; persistence must succeed before a new login is published, and superseded login responses are ignored.

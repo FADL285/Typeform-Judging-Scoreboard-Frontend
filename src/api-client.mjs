@@ -1,24 +1,24 @@
 import { isValidSession } from './session.mjs';
-export function createApiClient({ baseUrl, getSession, clearSession, fetchImpl = fetch, now = Date.now }) {
+import { backendUrl, requestJson } from './request.mjs';
+export function createApiClient({ baseUrl, getSession, clearSession, fetchImpl = fetch, now = Date.now, timeoutMs = 15000, development = false }) {
   return async function apiGet(path) {
+    const base = backendUrl(baseUrl, development);
     const session = getSession();
     if (!isValidSession(session, now())) {
       clearSession();
       throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
     }
-    const response = await fetchImpl(`${baseUrl.replace(/\/$/, '')}/api/${path}`, {
-      headers: { Authorization: `Bearer ${session.token}` },
-    });
-    if (response.status === 401) {
+    try {
+      const body = await requestJson(`${base}/api/${path}`, { headers: { Authorization: `Bearer ${session.token}` } }, { fetchImpl, timeoutMs });
+      return body.data;
+    } catch (error) {
+      if (error.status !== 401) throw error;
       if (getSession()?.token === session.token) {
         clearSession();
         throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
       }
       throw new Error('This request used an older session. Please try again.');
     }
-    const data = await response.json();
-    if (!response.ok) throw Object.assign(new Error(data.message || 'Unable to load scoreboard'), { status: response.status });
-    return data.data;
   };
 }
 export function destinationForError(error) {

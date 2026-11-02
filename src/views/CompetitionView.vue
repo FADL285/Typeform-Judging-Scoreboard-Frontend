@@ -25,6 +25,8 @@ async function load() {
     await fetchCompetition(props.id);
     teams.value = orderedTeams(competition.value.teams);
   } catch (error) {
+    competition.value = null;
+    teams.value = [];
     const destination = destinationForError(error);
     if (destination === "authentication") router.replace({ name: "authentication" });
     else if (destination === "NotFound") router.replace({

@@ -1,34 +1,26 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-
-import { isValidSession } from "../session.mjs";
-
+import { isValidSession, createSessionManager } from "../session.mjs";
+import { backendUrl, requestJson } from "../request.mjs";
 const STORAGE_KEY = "scoreboard-session";
 export const useAuthStore = defineStore("auth", () => {
   const token = ref("");
   const expires = ref(0);
-  try {
-    const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null");
-    if (isValidSession(saved)) { token.value = saved.token; expires.value = saved.expires; }
-  } catch { sessionStorage.removeItem(STORAGE_KEY); }
-  function isSessionValid() {
-    const valid = isValidSession({ token: token.value, expires: expires.value });
-    if (!valid) logout();
-    return valid;
-  }
-  function logout() {
-    token.value = ""; expires.value = 0; sessionStorage.removeItem(STORAGE_KEY);
-  }
-  async function login(username, password) {
-    const base = import.meta.env.VITE_BASE_URL.replace(/\/$/, "");
-    const response = await fetch(`${base}/api/auth`, {
+  const manager = createSessionManager({
+    read: () => sessionStorage.getItem(STORAGE_KEY),
+    write: value => sessionStorage.setItem(STORAGE_KEY, value),
+    remove: () => sessionStorage.removeItem(STORAGE_KEY),
+    publish: session => { token.value = session.token; expires.value = session.expires; },
+    fetchLogin: (username, password) => requestJson(`${backendUrl(import.meta.env.VITE_BASE_URL, import.meta.env.DEV)}/api/auth`, {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || "Unable to sign in");
-    token.value = result.token; expires.value = result.expires;
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+    }),
+  });
+  manager.restore();
+  function isSessionValid() {
+    const valid = isValidSession({ token: token.value, expires: expires.value });
+    if (!valid) manager.logout();
+    return valid;
   }
-  return { isSessionValid, token, expires, login, logout };
+  return { isSessionValid, token, expires, login: manager.login, logout: manager.logout };
 });
