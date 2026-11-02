@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onBeforeUnmount, watch } from "vue";
+import { createLoadGuard } from "../load-state.mjs";
 import { storeToRefs } from "pinia";
 import { useRouter, useRoute } from "vue-router";
 import TeamItem from "@/components/TeamItem.vue";
@@ -19,12 +20,17 @@ const teams = ref([]);
 
 const loadError = ref("");
 const loading = ref(false);
+const guard = createLoadGuard();
+onBeforeUnmount(() => guard.stop());
 async function load() {
+  const isCurrent = guard.begin();
   loadError.value = ""; loading.value = true;
   try {
-    await fetchCompetition(props.id);
+    await fetchCompetition(props.id, isCurrent);
+    if (!isCurrent()) return;
     teams.value = orderedTeams(competition.value.teams);
   } catch (error) {
+    if (!isCurrent() || error.stale) return;
     competition.value = null;
     teams.value = [];
     const destination = destinationForError(error);
@@ -34,9 +40,9 @@ async function load() {
       query: route.query, hash: route.hash,
     });
     else loadError.value = error.message || "Unable to load scores. Please try again.";
-  } finally { loading.value = false; }
+  } finally { if (isCurrent()) loading.value = false; }
 }
-load();
+watch(() => props.id, load, { immediate: true });
 </script>
 
 <template>

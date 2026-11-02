@@ -10,6 +10,9 @@ export function createApiClient({ baseUrl, getSession, clearSession, fetchImpl =
     }
     try {
       const body = await requestJson(`${base}/api/${path}`, { headers: { Authorization: `Bearer ${session.token}` } }, { fetchImpl, timeoutMs });
+      if (getSession()?.token !== session.token) {
+        throw Object.assign(new Error('This request used an older session. Please try again.'), { stale: true });
+      }
       return body.data;
     } catch (error) {
       if (error.status !== 401) throw error;
@@ -17,7 +20,7 @@ export function createApiClient({ baseUrl, getSession, clearSession, fetchImpl =
         clearSession();
         throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
       }
-      throw new Error('This request used an older session. Please try again.');
+      throw Object.assign(new Error('This request used an older session. Please try again.'), { stale: true });
     }
   };
 }

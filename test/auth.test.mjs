@@ -40,3 +40,13 @@ test('a delayed old-token 401 cannot erase a newer login or route it to sign-in'
   await assert.rejects(pending, error => destinationForError(error) === null);
   assert.equal(cleared, false); assert.equal(session.token, 'new');
 });
+
+ test('late successful responses from an old session cannot publish panel data', async () => {
+  let session = { token: 'old', expires: 9000 }; let complete;
+  const get = createApiClient({ baseUrl: 'https://backend.example', getSession: () => session,
+    clearSession() {}, now: () => 1000, fetchImpl: () => new Promise(resolve => { complete = resolve; }) });
+  const pending = get('panel');
+  session = { token: 'new', expires: 9000 };
+  complete({ ok: true, status: 200, json: async () => ({ data: { title: 'old panel' } }) });
+  await assert.rejects(pending, error => error.stale === true && destinationForError(error) === null);
+ });

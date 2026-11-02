@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
+import { createLoadGuard } from "../load-state.mjs";
 import { useRouter } from "vue-router";
 import { destinationForError } from "../api-client.mjs";
 import { storeToRefs } from "pinia";
@@ -13,14 +14,18 @@ const { fetchCompetitions } = useCompetitionStore();
 const router = useRouter();
 const loadError = ref("");
 const loading = ref(false);
+const guard = createLoadGuard();
+onBeforeUnmount(() => guard.stop());
 async function load() {
+  const isCurrent = guard.begin();
   loadError.value = "";
   loading.value = true;
-  try { await fetchCompetitions(); }
+  try { await fetchCompetitions(isCurrent); }
   catch (error) {
+    if (!isCurrent() || error.stale) return;
     if (destinationForError(error) === "authentication") router.replace({ name: "authentication" });
     else loadError.value = error.message || "Unable to load panels. Please try again.";
-  } finally { loading.value = false; }
+  } finally { if (isCurrent()) loading.value = false; }
 }
 load();
 </script>

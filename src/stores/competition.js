@@ -21,20 +21,22 @@ export const useCompetitionStore = defineStore("competition", {
       state.competitions.find((c) => c.id === id),
   },
   actions: {
-    async fetchCompetitions() {
+    async fetchCompetitions(isCurrent = () => true) {
       // Check if competitions exists
       if (this.competitions.length) return;
 
-      this.competitions = (await apiGet("")).sort((c1, c2) => {
+      const result = (await apiGet("")).sort((c1, c2) => {
         if (c1.variables?.panel)
           return c1.variables.panel.localeCompare(c2.variables.panel);
         else return c1.title.localeCompare(c2.title);
       });
+      if (isCurrent()) this.competitions = result;
     },
-    async fetchCompetition(id) {
+    async fetchCompetition(id, isCurrent = () => true) {
       this.competition = null;
 
-      this.competition = await apiGet(encodeURIComponent(id));
+      const result = await apiGet(encodeURIComponent(id));
+      if (isCurrent()) this.competition = result;
     },
     getOverallQuestionRating(teamId, questionId) {
       return questionTotal(this.teamById(teamId), questionId);
