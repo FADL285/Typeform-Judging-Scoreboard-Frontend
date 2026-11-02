@@ -90,3 +90,5 @@ Teams retain the original event implementation: rank by descending SUM of all cr
 Run scoring regression checks with `npm test`.
 
 Backend URLs must use HTTPS; HTTP is accepted only for explicit Vite local development to localhost/127.0.0.1/::1. Login and scoreboard requests have a 15-second deadline. Denied session storage remains safely signed out; persistence must succeed before a new login is published, and superseded login responses are ignored.
+
+A competition with no rating criteria now fails explicitly instead of producing an all-zero ranking. Teams with no submissions retain the original zero-total behavior; no new disqualification or award policy is introduced.
