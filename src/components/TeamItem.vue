@@ -44,7 +44,8 @@ const overallRating = computed(() => getTeamOverallRating(props.team.id));
 
     <footer>
       <div class="flex flex-col items-center justify-center text-2xl">
-        <p>Total Rate:</p>
+        <p class="text-base">Total score (ranking): {{ overallRating }}</p>
+        <p>Average per judging response:</p>
         <p class="mx-4 text-4xl text-zinc-800">
           {{
             overallRating / Math.max(responsesLength, 1) > 0

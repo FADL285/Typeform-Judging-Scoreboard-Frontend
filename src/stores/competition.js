@@ -1,9 +1,6 @@
 import { defineStore } from "pinia";
-import { useFetch } from "@vueuse/core";
-
-const baseUrl = import.meta.env.VITE_BASE_URL;
-
-const BASE_API_URL = `${baseUrl}/api/`;
+import { apiGet } from "@/api.js";
+import { questionTotal, teamTotal, rankTeams } from "../scoring.mjs";
 
 export const useCompetitionStore = defineStore("competition", {
   state: () => ({
@@ -24,54 +21,31 @@ export const useCompetitionStore = defineStore("competition", {
       state.competitions.find((c) => c.id === id),
   },
   actions: {
-    async fetchCompetitions() {
+    async fetchCompetitions(isCurrent = () => true) {
       // Check if competitions exists
       if (this.competitions.length) return;
 
-      const { error, data } = await useFetch(BASE_API_URL);
-      if (error.value) {
-        throw new Error(error.value);
-      }
-
-      this.competitions = JSON.parse(data.value).data.sort((c1, c2) => {
+      const result = (await apiGet("")).sort((c1, c2) => {
         if (c1.variables?.panel)
           return c1.variables.panel.localeCompare(c2.variables.panel);
         else return c1.title.localeCompare(c2.title);
       });
+      if (isCurrent()) this.competitions = result;
     },
-    async fetchCompetition(id) {
+    async fetchCompetition(id, isCurrent = () => true) {
       this.competition = null;
 
-      const { statusCode, data } = await useFetch(`${BASE_API_URL}/${id}`);
-      if (statusCode.value === 404) {
-        throw new Error("Competition not found");
-      }
-
-      this.competition = JSON.parse(data.value)?.data || null;
+      const result = await apiGet(encodeURIComponent(id));
+      if (isCurrent()) this.competition = result;
     },
     getOverallQuestionRating(teamId, questionId) {
-      const team = this.teamById(teamId);
-      if (!(team && team.responses)) {
-        return 0;
-      }
-      const questionResponses = team.responses.map((response) =>
-        response.answers.find((answer) => answer.id === questionId)
-      );
-      return questionResponses.reduce(
-        (sum, response) => sum + response.rating,
-        0
-      );
+      return questionTotal(this.teamById(teamId), questionId);
     },
     getTeamOverallRating(teamId) {
-      return this.ratingQuestionsIds.reduce((sum, questionId) => {
-        return sum + this.getOverallQuestionRating(teamId, questionId);
-      }, 0);
+      return teamTotal(this.teamById(teamId), this.ratingQuestionsIds);
     },
     orderedTeams(teams) {
-      return teams.sort(
-        (t1, t2) =>
-          this.getTeamOverallRating(t2.id) - this.getTeamOverallRating(t1.id)
-      );
+      return rankTeams(teams, this.ratingQuestionsIds);
     },
   },
 });

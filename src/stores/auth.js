@@ -1,25 +1,26 @@
-import { computed } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
-import { useLocalStorage } from "@vueuse/core";
-
-// GET AUTH INFO AND PASSWORD From .env
-const authUser = import.meta.env.VITE_AUTH_USER;
-const authPassword = import.meta.env.VITE_AUTH_PASS;
-const authIdentifier = import.meta.env.VITE_AUTH_IDENTIFIER;
-
+import { isValidSession, createSessionManager } from "../session.mjs";
+import { backendUrl, requestJson } from "../request.mjs";
+const STORAGE_KEY = "scoreboard-session";
 export const useAuthStore = defineStore("auth", () => {
-  const identifier = useLocalStorage("identifier");
-  const authenticated = computed(() => identifier.value === authIdentifier);
-  function login(username, password) {
-    if (username === authUser && password === authPassword) {
-      identifier.value = authIdentifier;
-    } else {
-      throw new Error("Username or password incorrect");
-    }
+  const token = ref("");
+  const expires = ref(0);
+  const manager = createSessionManager({
+    read: () => sessionStorage.getItem(STORAGE_KEY),
+    write: value => sessionStorage.setItem(STORAGE_KEY, value),
+    remove: () => sessionStorage.removeItem(STORAGE_KEY),
+    publish: session => { token.value = session.token; expires.value = session.expires; },
+    fetchLogin: (username, password) => requestJson(`${backendUrl(import.meta.env.VITE_BASE_URL, import.meta.env.DEV)}/api/auth`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    }),
+  });
+  manager.restore();
+  function isSessionValid() {
+    const valid = isValidSession({ token: token.value, expires: expires.value });
+    if (!valid) manager.logout();
+    return valid;
   }
-
-  return {
-    authenticated,
-    login,
-  };
+  return { isSessionValid, token, expires, login: manager.login, logout: manager.logout };
 });
