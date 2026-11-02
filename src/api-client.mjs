@@ -1,6 +1,12 @@
 import { isValidSession } from './session.mjs';
 import { backendUrl, requestJson } from './request.mjs';
 export function createApiClient({ baseUrl, getSession, clearSession, fetchImpl = fetch, now = Date.now, timeoutMs = 15000, development = false }) {
+  function staleSessionError() {
+    if (!isValidSession(getSession(), now())) {
+      return Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
+    }
+    return Object.assign(new Error('This request used an older session. Please try again.'), { stale: true });
+  }
   return async function apiGet(path) {
     const base = backendUrl(baseUrl, development);
     const session = getSession();
@@ -11,7 +17,7 @@ export function createApiClient({ baseUrl, getSession, clearSession, fetchImpl =
     try {
       const body = await requestJson(`${base}/api/${path}`, { headers: { Authorization: `Bearer ${session.token}` } }, { fetchImpl, timeoutMs });
       if (getSession()?.token !== session.token) {
-        throw Object.assign(new Error('This request used an older session. Please try again.'), { stale: true });
+        throw staleSessionError();
       }
       return body.data;
     } catch (error) {
@@ -20,7 +26,7 @@ export function createApiClient({ baseUrl, getSession, clearSession, fetchImpl =
         clearSession();
         throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 });
       }
-      throw Object.assign(new Error('This request used an older session. Please try again.'), { stale: true });
+      throw staleSessionError();
     }
   };
 }

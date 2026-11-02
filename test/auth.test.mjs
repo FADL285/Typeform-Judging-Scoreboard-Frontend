@@ -50,3 +50,16 @@ test('a delayed old-token 401 cannot erase a newer login or route it to sign-in'
   complete({ ok: true, status: 200, json: async () => ({ data: { title: 'old panel' } }) });
   await assert.rejects(pending, error => error.stale === true && destinationForError(error) === null);
  });
+
+test('a current pending load routes to sign-in after another request clears the session', async () => {
+  for (const status of [200, 401]) {
+    let session = { token: 'old', expires: 9000 }; let complete;
+    const get = createApiClient({ baseUrl: 'https://backend.example', getSession: () => session,
+      clearSession: () => { session = null; }, now: () => 1000,
+      fetchImpl: () => new Promise(resolve => { complete = resolve; }) });
+    const pending = get('panel');
+    session = null;
+    complete({ ok: status === 200, status, json: async () => ({ data: { title: 'old panel' } }) });
+    await assert.rejects(pending, error => destinationForError(error) === 'authentication');
+  }
+});

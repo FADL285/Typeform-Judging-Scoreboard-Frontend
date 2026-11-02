@@ -22,7 +22,7 @@ async function load() {
   loading.value = true;
   try { await fetchCompetitions(isCurrent); }
   catch (error) {
-    if (!isCurrent() || error.stale) return;
+    if (!isCurrent()) return;
     if (destinationForError(error) === "authentication") router.replace({ name: "authentication" });
     else loadError.value = error.message || "Unable to load panels. Please try again.";
   } finally { if (isCurrent()) loading.value = false; }

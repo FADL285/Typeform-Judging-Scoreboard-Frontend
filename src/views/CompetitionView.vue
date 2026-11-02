@@ -30,7 +30,7 @@ async function load() {
     if (!isCurrent()) return;
     teams.value = orderedTeams(competition.value.teams);
   } catch (error) {
-    if (!isCurrent() || error.stale) return;
+    if (!isCurrent()) return;
     competition.value = null;
     teams.value = [];
     const destination = destinationForError(error);
