@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> **This frontend is now maintained in [Typeform Judging Scoreboard](https://github.com/FADL285/Typeform-Judging-Scoreboard).**
+> The unified repository contains both applications and their original Git histories. Use its [frontend directory](https://github.com/FADL285/Typeform-Judging-Scoreboard/tree/main/frontend) and current setup instructions for development and deployment.
+>
+> This repository is retained for historical code and pull-request discussions. The documentation below describes the former standalone frontend and may be outdated.
+
 <div align="center">
     <h1>Typeform - Judging Scoreboard - Front-End</h1>
     <img src="https://user-images.githubusercontent.com/53804570/196001680-ce93ed21-9302-483f-a6f6-9b5ea1ea444f.gif" alt="Logo" />
